@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>日程プレビュー</title>
+  <style>
+    /* 基本スタイル */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      width: 210mm; /* A4 幅 */
+      margin: 0 auto;
+      padding: 1cm;
+      box-sizing: border-box;
+    }
+    /* 上部エリア */
+    .top-area {
+      position: relative;
+      height: 2cm;
+      border-bottom: 1px solid #ccc;
+    }
+    /* 右上のロゴアップロードエリア */
+    .upload-logo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 2cm;
+      height: 2cm;
+      border: 1px dashed #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .upload-logo input[type="file"] {
+      display: none;
+    }
+    .upload-logo span {
+      font-size: 24px;
+      color: #aaa;
+    }
+    /* タイトル */
+    .title {
+      text-align: center;
+      font-size: 26px;
+      font-weight: bold;
+      margin-top: 0.5cm;
+    }
+    /* フォームエリア */
+    .section {
+      margin-top: 1cm;
+    }
+    .section-title {
+      margin-left: 4ch; /* 左側に4文字分の空白 */
+      font-size: 22px;
+      font-weight: bold;
+    }
+    .form-group {
+      margin: 0.5cm 0;
+    }
+    label {
+      display: inline-block;
+      width: 200px;
+    }
+    input[type="text"] {
+      width: 200px;
+      padding: 4px;
+    }
+    /* プレビューエリア */
+    .preview {
+      border: 1px solid #000;
+      padding: 1cm;
+      margin-top: 1cm;
+    }
+    .preview .top-area {
+      height: 2cm;
+      position: relative;
+    }
+    /* ボタン */
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 1cm;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- 入力フォームエリア -->
+    <div id="inputSection">
+      <div class="top-area">
+        <!-- ロゴアップロードエリア -->
+        <div class="upload-logo" id="logoUpload">
+          <span>➕</span>
+          <input type="file" id="logoInput" accept="image/*">
+        </div>
+      </div>
+      <div class="title">日程プレビュー</div>
+      
+      <!-- 出発 (Departure) 部分 -->
+      <div class="section" id="departureSection">
+        <div class="section-title">出発</div>
+        <div class="form-group">
+          <label>出発日 :</label>
+          <input type="text" id="departureDate" placeholder="MM/DD">
+        </div>
+        <div class="form-group">
+          <label>都市:</label>
+          <input type="text" id="departureCity" placeholder="例: Tokyo">
+        </div>
+        <div class="form-group">
+          <label>空港:</label>
+          <input type="text" id="departureAirport" placeholder="例: 成田">
+        </div>
+        <div class="form-group">
+          <label>ターミナル:</label>
+          <input type="text" id="departureTerminal" placeholder="例: ターミナル2">
+        </div>
+        <div class="form-group">
+          <label>フライト:</label>
+          <input type="text" id="departureFlight" placeholder="例: NH123">
+        </div>
+        <div class="form-group">
+          <label>フライト時間:</label>
+          <input type="text" id="departureFlightTime" placeholder="例: 10:00 - 14:00">
+        </div>
+        <div class="form-group">
+          <label>飛行時間:</label>
+          <input type="text" id="departureDuration" placeholder="例: 4">
+        </div>
+        <div class="form-group">
+          <label>到着情報:</label>
+          <input type="text" id="arrivalInfo" placeholder="例: 14:00着">
+        </div>
+      </div>
+      
+      <!-- 空港送迎 (Airport Pickup) 部分 -->
+      <div class="section" id="pickupSection">
+        <div class="section-title">空港送迎</div>
+        <div class="form-group">
+          <label>出迎え担当者:</label>
+          <input type="text" id="meetingPerson" placeholder="例: 山田太郎">
+        </div>
+        <div class="form-group">
+          <label>車両番号:</label>
+          <input type="text" id="vehicleNumber" placeholder="例: ABC-123">
+        </div>
+        <div class="form-group">
+          <label>ホテル名:</label>
+          <input type="text" id="hotelName" placeholder="例: ホテルニューオータニ">
+        </div>
+        <div class="form-group">
+          <label>ホテル住所:</label>
+          <input type="text" id="hotelAddress" placeholder="例: 東京都千代田区">
+        </div>
+        <div class="form-group">
+          <label>空港からホテルまでの時間:</label>
+          <input type="text" id="airportHotelTime" placeholder="例: 30">
+        </div>
+        <div class="form-group">
+          <label>空港からホテルまでの距離:</label>
+          <input type="text" id="airportHotelDistance" placeholder="例: 20">
+        </div>
+      </div>
+      
+      <!-- 会場情報 (Venue info) 部分 -->
+      <div class="section" id="venueSection">
+        <div class="section-title">会場情報</div>
+        <div class="form-group">
+          <label>会場名:</label>
+          <input type="text" id="venueName" placeholder="例: コンサートホール">
+        </div>
+        <div class="form-group">
+          <label>会場住所:</label>
+          <input type="text" id="venueAddress" placeholder="例: 東京都渋谷区">
+        </div>
+        <div class="form-group">
+          <label>サウンドチェック時間:</label>
+          <input type="text" id="soundCheckTime" placeholder="例: 18:00">
+        </div>
+        <div class="form-group">
+          <label>ディナー時間:</label>
+          <input type="text" id="venueDinnerTime" placeholder="例: 19:30">
+        </div>
+        <div class="form-group">
+          <label>ショー開始時間:</label>
+          <input type="text" id="showTime" placeholder="例: 20:00">
+        </div>
+        <div class="form-group">
+          <label>ホテルから会場までの時間:</label>
+          <input type="text" id="venueHotelTime" placeholder="例: 15">
+        </div>
+        <div class="form-group">
+          <label>ホテルから会場までの距離:</label>
+          <input type="text" id="venueHotelDistance" placeholder="例: 10">
+        </div>
+      </div>
+      
+      <!-- 帰路情報 (Return Details) 部分 -->
+      <div class="section" id="returnSection">
+        <div class="section-title">帰路情報</div>
+        <div class="form-group">
+          <label>集合日時:</label>
+          <input type="text" id="meetingDateTime" placeholder="例: 2025-03-10 08:00">
+        </div>
+        <div class="form-group">
+          <label>集合場所:</label>
+          <input type="text" id="meetingArea" placeholder="例: ロビー">
+        </div>
+        <div class="form-group">
+          <label>ホテルから空港までの時間:</label>
+          <input type="text" id="hotelAirportTime" placeholder="例: 25">
+        </div>
+        <div class="form-group">
+          <label>ホテルから空港までの距離:</label>
+          <input type="text" id="hotelAirportDistance" placeholder="例: 18">
+        </div>
+        <div class="form-group">
+          <label>帰国出発日:</label>
+          <input type="text" id="returnDepartureDate" placeholder="MM/DD">
+        </div>
+        <!-- 帰国出発情報 -->
+        <div class="form-group">
+          <label>都市:</label>
+          <input type="text" id="returnCity" placeholder="例: ロサンゼルス">
+        </div>
+        <div class="form-group">
+          <label>空港:</label>
+          <input type="text" id="returnAirport" placeholder="例: LAX">
+        </div>
+        <div class="form-group">
+          <label>ターミナル:</label>
+          <input type="text" id="returnTerminal" placeholder="例: ターミナルB">
+        </div>
+        <div class="form-group">
+          <label>フライト:</label>
+          <input type="text" id="returnFlight" placeholder="例: DL456">
+        </div>
+        <div class="form-group">
+          <label>帰国フライト時間:</label>
+          <input type="text" id="returnFlightTime" placeholder="例: 09:00 - 13:00">
+        </div>
+        <div class="form-group">
+          <label>帰国フライト所要時間:</label>
+          <input type="text" id="returnDuration" placeholder="例: 4">
+        </div>
+        <div class="form-group">
+          <label>帰国到着情報:</label>
+          <input type="text" id="returnArrivalInfo" placeholder="例: 13:00着">
+        </div>
+      </div>
+      
+      <!-- 下部に2cmの余白 -->
+      <div style="height:2cm;"></div>
+      
+      <!-- プレビュー更新ボタン -->
+      <button class="button" id="updatePreviewBtn">日程プレビューを更新</button>
+    </div>
+    
+    <!-- 区切り線 -->
+    <hr style="margin: 2cm 0;">
+    
+    <!-- プレビューエリア（captureArea 部分のみ画像出力対象） -->
+    <div id="previewSection" class="preview">
+      <div id="captureArea">
+        <!-- 上部ロゴエリア -->
+        <div class="top-area" id="previewLogoArea">
+          <!-- アップロードしたロゴが表示される -->
+        </div>
+        <div class="title">日程プレビュー</div>
+        
+        <!-- プレビュー：出発 -->
+        <div class="section" id="previewDeparture">
+          <div class="section-title">出発</div>
+          <div id="previewDepartureContent"></div>
+        </div>
+        
+        <!-- プレビュー：空港送迎 -->
+        <div class="section" id="previewPickup">
+          <div class="section-title">空港送迎</div>
+          <div id="previewPickupContent"></div>
+        </div>
+        
+        <!-- プレビュー：会場情報 -->
+        <div class="section" id="previewVenue">
+          <div class="section-title">会場情報</div>
+          <div id="previewVenueContent"></div>
+        </div>
+        
+        <!-- プレビュー：帰路情報 -->
+        <div class="section" id="previewReturn">
+          <div class="section-title">帰路情報</div>
+          <div id="previewReturnContent"></div>
+        </div>
+        
+        <!-- 下部に2cmの余白 -->
+        <div style="height:2cm;"></div>
+      </div>
+    </div>
+    
+    <!-- 画像として保存ボタン（captureArea 外に配置） -->
+    <button class="button" id="saveImageBtn">画像として保存</button>
+  </div>
+  
+  <!-- html2canvas ライブラリ -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    // ロゴアップロードの処理
+    const logoUpload = document.getElementById('logoUpload');
+    const logoInput = document.getElementById('logoInput');
+    const previewLogoArea = document.getElementById('previewLogoArea');
+    
+    logoUpload.addEventListener('click', () => {
+      logoInput.click();
+    });
+    
+    logoInput.addEventListener('change', function(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          previewLogoArea.innerHTML = '<img src="' + e.target.result + '" style="max-width:100%; max-height:100%;">';
+        }
+        reader.readAsDataURL(file);
+      }
+    });
+    
+    // プレビュー更新処理
+    document.getElementById('updatePreviewBtn').addEventListener('click', function() {
+      // 出発 部分
+      const departureContent = `
+        出発日 : ${document.getElementById('departureDate').value}<br>
+        都市: ${document.getElementById('departureCity').value}<br>
+        空港: ${document.getElementById('departureAirport').value}<br>
+        ターミナル: ${document.getElementById('departureTerminal').value}<br>
+        フライト: ${document.getElementById('departureFlight').value}<br>
+        フライト時間: ${document.getElementById('departureFlightTime').value}<br>
+        飛行時間: ${document.getElementById('departureDuration').value}<br>
+        到着情報: ${document.getElementById('arrivalInfo').value}
+      `;
+      document.getElementById('previewDepartureContent').innerHTML = departureContent;
+      
+      // 空港送迎 部分
+      const pickupContent = `
+        出迎え担当者: ${document.getElementById('meetingPerson').value}<br>
+        車両番号: ${document.getElementById('vehicleNumber').value}<br>
+        ホテル名: ${document.getElementById('hotelName').value}<br>
+        ホテル住所: ${document.getElementById('hotelAddress').value}<br>
+        空港からホテルまでの時間: ${document.getElementById('airportHotelTime').value}<br>
+        空港からホテルまでの距離: ${document.getElementById('airportHotelDistance').value}
+      `;
+      document.getElementById('previewPickupContent').innerHTML = pickupContent;
+      
+      // 会場情報 部分
+      const venueContent = `
+        会場名: ${document.getElementById('venueName').value}<br>
+        会場住所: ${document.getElementById('venueAddress').value}<br>
+        サウンドチェック時間: ${document.getElementById('soundCheckTime').value}<br>
+        ディナー時間: ${document.getElementById('venueDinnerTime').value}<br>
+        ショー開始時間: ${document.getElementById('showTime').value}<br>
+        ホテルから会場までの時間: ${document.getElementById('venueHotelTime').value}<br>
+        ホテルから会場までの距離: ${document.getElementById('venueHotelDistance').value}
+      `;
+      document.getElementById('previewVenueContent').innerHTML = venueContent;
+      
+      // 帰路情報 部分
+      const returnContent = `
+        集合日時: ${document.getElementById('meetingDateTime').value}<br>
+        集合場所: ${document.getElementById('meetingArea').value}<br>
+        ホテルから空港までの時間: ${document.getElementById('hotelAirportTime').value}<br>
+        ホテルから空港までの距離: ${document.getElementById('hotelAirportDistance').value}<br>
+        帰国出発日: ${document.getElementById('returnDepartureDate').value}<br>
+        都市: ${document.getElementById('returnCity').value}<br>
+        空港: ${document.getElementById('returnAirport').value}<br>
+        ターミナル: ${document.getElementById('returnTerminal').value}<br>
+        フライト: ${document.getElementById('returnFlight').value}<br>
+        帰国フライト時間: ${document.getElementById('returnFlightTime').value}<br>
+        帰国フライト所要時間: ${document.getElementById('returnDuration').value}<br>
+        帰国到着情報: ${document.getElementById('returnArrivalInfo').value}
+      `;
+      document.getElementById('previewReturnContent').innerHTML = returnContent;
+    });
+    
+    // 画像として保存（captureArea 部分のみをキャプチャ、scale を 2 に設定して解像度向上）
+    document.getElementById('saveImageBtn').addEventListener('click', function() {
+      html2canvas(document.getElementById('captureArea'), { scale: 2 }).then(function(canvas) {
+        // A4 幅に制限 (210mm ≒ 210 * 3.78 px)
+        const a4Width = 210 * 3.78;
+        if (canvas.width > a4Width) {
+          const scale = a4Width / canvas.width;
+          const scaledCanvas = document.createElement("canvas");
+          scaledCanvas.width = a4Width;
+          scaledCanvas.height = canvas.height * scale;
+          const ctx = scaledCanvas.getContext("2d");
+          ctx.drawImage(canvas, 0, 0, scaledCanvas.width, scaledCanvas.height);
+          canvas = scaledCanvas;
+        }
+        // ダウンロードリンク作成
+        const link = document.createElement('a');
+        link.download = 'itinerary_preview.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    });
+  </script>
+</body>
+</html>
