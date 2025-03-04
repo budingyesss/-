@@ -392,7 +392,7 @@
     
     // 画像として保存（captureArea 部分のみをキャプチャ、scale を 2 に設定して解像度向上）
     document.getElementById('saveImageBtn').addEventListener('click', function() {
-      html2canvas(document.getElementById('captureArea'), { scale: 2 }).then(function(canvas) {
+      html2canvas(document.getElementById('captureArea'), { scale: 4 }).then(function(canvas) {
         // A4 幅に制限 (210mm ≒ 210 * 3.78 px)
         const a4Width = 210 * 3.78;
         if (canvas.width > a4Width) {
